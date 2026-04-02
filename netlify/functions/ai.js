@@ -2,7 +2,7 @@ export async function handler(event) {
   try {
     const { message } = JSON.parse(event.body);
 
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -10,15 +10,24 @@ export async function handler(event) {
       },
       body: JSON.stringify({
         model: "gpt-4.1-mini",
-        input: message
+        messages: [
+          {
+            role: "system",
+            content: "Eres Arrow AI, una IA avanzada, rápida y útil."
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ]
       })
     });
 
     const data = await response.json();
 
     const reply =
-      data.output?.[0]?.content?.[0]?.text ||
-      "Sin respuesta de IA";
+      data.choices?.[0]?.message?.content ||
+      "La IA no respondió";
 
     return {
       statusCode: 200,
