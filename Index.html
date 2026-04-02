@@ -6,7 +6,7 @@
 
 <style>
 body{
-background:#0b1020;
+background:#020617;
 color:white;
 font-family:Arial;
 padding:20px;
@@ -15,14 +15,14 @@ padding:20px;
 #chat{
 height:60vh;
 overflow:auto;
-margin-bottom:10px;
+margin-bottom:15px;
 }
 
 .msg{
-background:#1a2240;
-padding:10px;
-margin:5px;
-border-radius:10px;
+background:#1e293b;
+padding:12px;
+margin:6px 0;
+border-radius:12px;
 }
 
 .user{
@@ -31,54 +31,61 @@ background:#2563eb;
 
 input{
 width:70%;
-padding:10px;
-border-radius:8px;
+padding:12px;
+border-radius:10px;
 border:none;
 }
 
 button{
-padding:10px;
-border:none;
+padding:12px;
 background:#2563eb;
 color:white;
-border-radius:8px;
+border:none;
+border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Arrow AI</h2>
+<h1>Arrow AI</h1>
 
 <div id="chat"></div>
 
-<input id="msg" placeholder="Escribe a tu IA">
+<input id="msg" placeholder="Escribe..." />
 <button onclick="send()">Enviar</button>
 
 <script>
 async function send(){
 
-let text = msg.value
+const text = msg.value
 
+// mensaje usuario
 chat.innerHTML += `<div class="msg user">${text}</div>`
 
-let res = await fetch("/.netlify/functions/ai",{
+msg.value=""
+
+// llamar IA
+const res = await fetch("/.netlify/functions/ai",{
 method:"POST",
-body:JSON.stringify({message:text})
+body: JSON.stringify({ message:text })
 })
 
-let data = await res.json()
+const data = await res.json()
 
-if(data.image){
-chat.innerHTML += `<div class="msg">
-<img src="${data.image}" width="200">
-</div>`
-}else{
+// respuesta IA
+if(data.reply){
 chat.innerHTML += `<div class="msg">${data.reply}</div>`
 }
 
-msg.value=""
-chat.scrollTop=chat.scrollHeight
+// imagen
+if(data.image){
+chat.innerHTML += `<div class="msg">
+<img src="${data.image}" width="100%">
+</div>`
+}
+
+chat.scrollTop = chat.scrollHeight
 
 }
 </script>
