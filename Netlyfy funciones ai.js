@@ -1,23 +1,24 @@
 export async function handler(event) {
 try {
 
-const { message } = JSON.parse(event.body)
+const body = JSON.parse(event.body || "{}")
+const message = body.message || "Hola"
 
-const response = await fetch("https://api.openai.com/v1/chat/completions", {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-"Authorization": "Bearer " + process.env.OPENAI_API_KEY
+const response = await fetch("https://api.openai.com/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Bearer ${process.env.OPENAI_API_KEY}`
 },
 body: JSON.stringify({
-model: "gpt-4.1-mini",
-messages: [
+model:"gpt-4.1-mini",
+messages:[
 {
-role: "system",
-content: "Eres Arrow AI GPT-4 Ultra, muy inteligente."
+role:"system",
+content:"Eres Arrow AI GPT-4 Ultra, muy inteligente."
 },
 {
-role: "user",
+role:"user",
 content: message
 }
 ]
@@ -26,19 +27,28 @@ content: message
 
 const data = await response.json()
 
+if(!data.choices){
 return {
-statusCode: 200,
+statusCode:200,
 body: JSON.stringify({
-reply: data?.choices?.[0]?.message?.content || "Sin respuesta"
+reply:"Error API"
+})
+}
+}
+
+return {
+statusCode:200,
+body: JSON.stringify({
+reply: data.choices[0].message.content
 })
 }
 
-} catch (err) {
+}catch(err){
 
 return {
-statusCode: 200,
+statusCode:200,
 body: JSON.stringify({
-reply: "Error IA"
+reply:"Error servidor"
 })
 }
 
