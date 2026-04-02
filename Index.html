@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Arrow AI GPT-4</title>
+
 <style>
 body{
 background:#020617;
@@ -45,31 +45,37 @@ border-radius:10px;
 }
 </style>
 </head>
+
 <body>
-<h2>Arrow AI GPT-4</h2>
+
+<h1>Arrow AI GPT-4</h1>
+
 <div id="chat"></div>
+
 <input id="msg" placeholder="Escribe a tu IA..." />
 <button onclick="send()">Enviar</button>
+
 <script>
 async function send(){
 
-const msg = document.getElementById("msg")
-const chat = document.getElementById("chat")
-
-const text = msg.value
+const text = document.getElementById("msg").value
 if(!text) return
 
-chat.innerHTML += `<div class="msg user">${text}</div>`
-msg.value=""
+const chat = document.getElementById("chat")
 
+chat.innerHTML += `<div class="msg user">${text}</div>`
 chat.innerHTML += `<div class="msg" id="loading">Pensando...</div>`
+
+document.getElementById("msg").value=""
+
+try{
 
 const res = await fetch("/.netlify/functions/ai",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-body: JSON.stringify({ message:text })
+body: JSON.stringify({message:text})
 })
 
 const data = await res.json()
@@ -78,10 +84,14 @@ document.getElementById("loading").remove()
 
 chat.innerHTML += `<div class="msg">${data.reply}</div>`
 
+}catch(e){
+document.getElementById("loading").innerText="Error"
+}
+
 chat.scrollTop = chat.scrollHeight
 
 }
 </script>
+
 </body>
 </html>
-:::
