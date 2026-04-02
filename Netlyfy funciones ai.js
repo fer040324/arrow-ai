@@ -7,14 +7,14 @@ const response = await fetch("https://api.openai.com/v1/chat/completions",{
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":"Bearer " + process.env.OPENAI_API_KEY
+"Authorization":`Bearer ${process.env.OPENAI_API_KEY}`
 },
 body: JSON.stringify({
 model:"gpt-4.1-mini",
 messages:[
 {
 role:"system",
-content:"Eres Arrow AI Ultra, muy inteligente y útil."
+content:"Eres Arrow AI GPT-4 Ultra, una inteligencia artificial muy avanzada, clara y útil."
 },
 {
 role:"user",
@@ -29,7 +29,7 @@ const data = await response.json()
 return {
 statusCode:200,
 body: JSON.stringify({
-reply: data.choices[0].message.content
+reply: data.choices?.[0]?.message?.content || "Sin respuesta"
 })
 }
 
@@ -37,7 +37,7 @@ reply: data.choices[0].message.content
 return {
 statusCode:200,
 body: JSON.stringify({
-reply:"Error conectando con IA"
+reply:"Error conectando con GPT-4"
 })
 }
 }
