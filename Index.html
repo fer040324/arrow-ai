@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Arrow AI</title>
+</head>
+<body>
+    <h1>Tu IA</h1>
+    <input id="input" placeholder="Escribí tu pregunta">
+    <button onclick="enviar()">Enviar</button>
+    <div id="respuesta"></div>
+    <script>
+        async function enviar() {
+            const mensaje = document.getElementById('input').value;
+            const respuesta = await fetch('/.netlify/functions/ai', {
+                method: 'POST',
+                body: JSON.stringify({ message: mensaje })
+            });
+            const data = await respuesta.json();
+            document.getElementById('respuesta').innerText = data.reply || "Error";
+        }
+    </script>
+</body>
+</html>
