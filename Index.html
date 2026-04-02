@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arrow AI</title>
+<title>Arrow AI GPT</title>
 
 <style>
 body{
@@ -15,14 +15,14 @@ padding:20px;
 #chat{
 height:60vh;
 overflow:auto;
-margin-bottom:15px;
+margin-bottom:10px;
 }
 
 .msg{
 background:#1e293b;
-padding:12px;
+padding:10px;
 margin:6px 0;
-border-radius:12px;
+border-radius:10px;
 }
 
 .user{
@@ -38,9 +38,9 @@ border:none;
 
 button{
 padding:12px;
+border:none;
 background:#2563eb;
 color:white;
-border:none;
 border-radius:10px;
 }
 </style>
@@ -48,24 +48,13 @@ border-radius:10px;
 
 <body>
 
-<h1>Arrow AI</h1>
+<h2>Arrow AI GPT-4</h2>
 
 <div id="chat"></div>
 
-<input id="msg" placeholder="Escribe..." />
+<input id="msg" placeholder="Escribe a tu IA">
 <button onclick="send()">Enviar</button>
 
-<script>
-async function send(){
-
-const text = msg.value
-
-// mensaje usuario
-chat.innerHTML += `<div class="msg user">${text}</div>`
-
-msg.value=""
-
-// llamar IA
 <script>
 async function send(){
 
@@ -75,6 +64,7 @@ if(!text) return
 chat.innerHTML += `<div class="msg user">${text}</div>`
 msg.value=""
 
+// GPT API
 const res = await fetch("/.netlify/functions/ai",{
 method:"POST",
 headers:{
@@ -85,34 +75,7 @@ body: JSON.stringify({ message:text })
 
 const data = await res.json()
 
-if(data.reply){
 chat.innerHTML += `<div class="msg">${data.reply}</div>`
-}
-
-if(data.image){
-chat.innerHTML += `<div class="msg">
-<img src="${data.image}" style="width:100%">
-</div>`
-}
-
-chat.scrollTop = chat.scrollHeight
-
-}
-</script>
-
-const data = await res.json()
-
-// respuesta IA
-if(data.reply){
-chat.innerHTML += `<div class="msg">${data.reply}</div>`
-}
-
-// imagen
-if(data.image){
-chat.innerHTML += `<div class="msg">
-<img src="${data.image}" width="100%">
-</div>`
-}
 
 chat.scrollTop = chat.scrollHeight
 
