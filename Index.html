@@ -66,10 +66,39 @@ chat.innerHTML += `<div class="msg user">${text}</div>`
 msg.value=""
 
 // llamar IA
+<script>
+async function send(){
+
+const text = msg.value
+if(!text) return
+
+chat.innerHTML += `<div class="msg user">${text}</div>`
+msg.value=""
+
 const res = await fetch("/.netlify/functions/ai",{
 method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
 body: JSON.stringify({ message:text })
 })
+
+const data = await res.json()
+
+if(data.reply){
+chat.innerHTML += `<div class="msg">${data.reply}</div>`
+}
+
+if(data.image){
+chat.innerHTML += `<div class="msg">
+<img src="${data.image}" style="width:100%">
+</div>`
+}
+
+chat.scrollTop = chat.scrollHeight
+
+}
+</script>
 
 const data = await res.json()
 
