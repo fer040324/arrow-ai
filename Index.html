@@ -1,1 +1,36 @@
+<script>
+async function send(){
 
+const msg = document.getElementById("msg")
+const chat = document.getElementById("chat")
+
+const text = msg.value
+if(!text) return
+
+// usuario
+chat.innerHTML += `<div class="msg user">${text}</div>`
+
+msg.value=""
+
+// loader
+chat.innerHTML += `<div class="msg" id="loading">Pensando...</div>`
+
+const res = await fetch("/.netlify/functions/ai",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({ message:text })
+})
+
+const data = await res.json()
+
+document.getElementById("loading").remove()
+
+// respuesta IA
+chat.innerHTML += `<div class="msg">${data.reply}</div>`
+
+chat.scrollTop = chat.scrollHeight
+
+}
+</script>
