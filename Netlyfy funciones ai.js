@@ -1,55 +1,49 @@
-exports.handler = async (event) => {
-try {
+exports.handler = async function(event) {
+  try {
+    const body = JSON.parse(event.body || "{}");
+    const message = body.message || "";
 
-const { message } = JSON.parse(event.body || "{}")
-const text = message.toLowerCase()
+    // detectar imagen
+    const lower = message.toLowerCase();
+    if (
+      lower.includes("imagen") ||
+      lower.includes("crea") ||
+      lower.includes("genera") ||
+      lower.includes("dibuja")
+    ) {
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image:
+            "https://image.pollinations.ai/prompt/" +
+            encodeURIComponent("ultra detailed 8k " + message),
+        }),
+      };
+    }
 
-// IMAGEN ULTRA
-if(
-text.includes("imagen") ||
-text.includes("crea") ||
-text.includes("genera") ||
-text.includes("dibuja")
-){
-return {
-statusCode:200,
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({
-image:`https://image.pollinations.ai/prompt/${encodeURIComponent(
-"Ultra detailed, 8k, cinematic, " + message
-)}`
-})
-}
-}
+    // IA texto
+    const res = await fetch(
+      "https://text.pollinations.ai/" +
+        encodeURIComponent(
+          "Eres Arrow AI Ultra. Responde de forma inteligente y clara. Usuario: " +
+            message
+        )
+    );
 
-// IA SUPER INTELIGENTE
-const response = await fetch(
-"https://text.pollinations.ai/" +
-encodeURIComponent(`
-Eres Arrow AI Ultra.
-Una inteligencia artificial más avanzada que un asistente común.
-Responde con inteligencia, claridad y detalle.
-Sé útil y conversacional.
+    const reply = await res.text();
 
-Usuario: ${message}
-IA:
-`)
-)
-
-const reply = await response.text()
-
-return {
-statusCode:200,
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({ reply })
-}
-
-}catch(e){
-return {
-statusCode:200,
-body:JSON.stringify({
-reply:"Estoy listo. Pregúntame algo."
-})
-}
-}
-}
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reply }),
+    };
+  } catch (err) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        reply: "Estoy funcionando. Hazme una pregunta.",
+      }),
+    };
+  }
+};
