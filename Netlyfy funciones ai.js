@@ -11,24 +11,34 @@ headers: {
 },
 body: JSON.stringify({
 model: "gpt-4.1-mini",
-input: `Responde como Arrow AI GPT-4 Ultra: ${message}`
+input: message
 })
 })
 
 const data = await response.json()
 
+// mostrar error real
+if(data.error){
 return {
-statusCode: 200,
+statusCode:200,
 body: JSON.stringify({
-reply: data.output?.[0]?.content?.[0]?.text || "Sin respuesta"
+reply: "API ERROR: " + data.error.message
+})
+}
+}
+
+return {
+statusCode:200,
+body: JSON.stringify({
+reply: data.output[0].content[0].text
 })
 }
 
 } catch (e) {
 return {
-statusCode: 200,
+statusCode:200,
 body: JSON.stringify({
-reply: "Error IA"
+reply: "SERVER ERROR"
 })
 }
 }
