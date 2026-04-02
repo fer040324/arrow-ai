@@ -1,3 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arrow AI GPT-4</title>
+<style>
+body{
+background:#020617;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+#chat{
+height:60vh;
+overflow:auto;
+margin-bottom:10px;
+}
+
+.msg{
+background:#1e293b;
+padding:12px;
+margin:6px 0;
+border-radius:12px;
+}
+
+.user{
+background:#2563eb;
+}
+
+input{
+width:70%;
+padding:12px;
+border-radius:10px;
+border:none;
+}
+
+button{
+padding:12px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:10px;
+}
+</style>
+</head>
+<body>
+<h2>Arrow AI GPT-4</h2>
+<div id="chat"></div>
+<input id="msg" placeholder="Escribe a tu IA..." />
+<button onclick="send()">Enviar</button>
 <script>
 async function send(){
 
@@ -7,12 +59,9 @@ const chat = document.getElementById("chat")
 const text = msg.value
 if(!text) return
 
-// usuario
 chat.innerHTML += `<div class="msg user">${text}</div>`
-
 msg.value=""
 
-// loader
 chat.innerHTML += `<div class="msg" id="loading">Pensando...</div>`
 
 const res = await fetch("/.netlify/functions/ai",{
@@ -27,10 +76,12 @@ const data = await res.json()
 
 document.getElementById("loading").remove()
 
-// respuesta IA
 chat.innerHTML += `<div class="msg">${data.reply}</div>`
 
 chat.scrollTop = chat.scrollHeight
 
 }
 </script>
+</body>
+</html>
+:::
