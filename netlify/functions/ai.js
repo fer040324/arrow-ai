@@ -1,6 +1,6 @@
 export async function handler(event) {
   try {
-    const { message } = JSON.parse(event.body);
+    const { message } = JSON.parse(event.body || "{}");
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
@@ -10,20 +10,26 @@ export async function handler(event) {
       },
       body: JSON.stringify({
         model: "gpt-4.1-mini",
-        input: [
-          {
-            role: "user",
-            content: message
-          }
-        ]
+        input: message
       })
     });
 
     const data = await response.json();
 
+    if (!response.ok) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          reply: `API ERROR: ${data?.error?.message || "unknown"}`
+        })
+      };
+    }
+
     const reply =
+      data.output?.find(item => item.type === "message" && item.role === "assistant")
+        ?.content?.find(part => part.type === "output_text")
+        ?.text ||
       data.output_text ||
-      data.output?.[0]?.content?.[0]?.text ||
       "La IA no respondió";
 
     return {
@@ -34,9 +40,7 @@ export async function handler(event) {
   } catch (error) {
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        reply: "Error conectando con IA"
-      })
+      body: JSON.stringify({ reply: "SERVER ERROR" })
     };
   }
 }
