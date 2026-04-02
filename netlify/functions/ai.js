@@ -16,11 +16,13 @@ export async function handler(event) {
 
     const data = await response.json();
 
+    const reply =
+      data.output?.[0]?.content?.[0]?.text ||
+      "Sin respuesta de IA";
+
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        reply: data.output[0].content[0].text
-      })
+      body: JSON.stringify({ reply })
     };
 
   } catch (error) {
