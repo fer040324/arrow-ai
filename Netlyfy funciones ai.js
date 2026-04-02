@@ -14,7 +14,7 @@ model:"gpt-4.1-mini",
 messages:[
 {
 role:"system",
-content:"Eres Arrow AI Ultra, una IA muy inteligente."
+content:"Eres Arrow AI Ultra, muy inteligente y útil."
 },
 {
 role:"user",
@@ -37,7 +37,7 @@ reply: data.choices[0].message.content
 return {
 statusCode:200,
 body: JSON.stringify({
-reply:"Error IA"
+reply:"Error conectando con IA"
 })
 }
 }
