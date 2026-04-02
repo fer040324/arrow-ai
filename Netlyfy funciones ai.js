@@ -1,49 +1,44 @@
 exports.handler = async function(event) {
-  try {
-    const body = JSON.parse(event.body || "{}");
-    const message = body.message || "";
+try {
 
-    // detectar imagen
-    const lower = message.toLowerCase();
-    if (
-      lower.includes("imagen") ||
-      lower.includes("crea") ||
-      lower.includes("genera") ||
-      lower.includes("dibuja")
-    ) {
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image:
-            "https://image.pollinations.ai/prompt/" +
-            encodeURIComponent("ultra detailed 8k " + message),
-        }),
-      };
-    }
+const { message } = JSON.parse(event.body)
 
-    // IA texto
-    const res = await fetch(
-      "https://text.pollinations.ai/" +
-        encodeURIComponent(
-          "Eres Arrow AI Ultra. Responde de forma inteligente y clara. Usuario: " +
-            message
-        )
-    );
+const response = await fetch("https://api.openai.com/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer " + process.env.OPENAI_API_KEY
+},
+body: JSON.stringify({
+model:"gpt-4.1-mini",
+messages:[
+{
+role:"system",
+content:"Eres Arrow AI Ultra, una IA muy inteligente."
+},
+{
+role:"user",
+content: message
+}
+]
+})
+})
 
-    const reply = await res.text();
+const data = await response.json()
 
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reply }),
-    };
-  } catch (err) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        reply: "Estoy funcionando. Hazme una pregunta.",
-      }),
-    };
-  }
-};
+return {
+statusCode:200,
+body: JSON.stringify({
+reply: data.choices[0].message.content
+})
+}
+
+}catch(e){
+return {
+statusCode:200,
+body: JSON.stringify({
+reply:"Error IA"
+})
+}
+}
+}
